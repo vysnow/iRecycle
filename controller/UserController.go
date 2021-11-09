@@ -96,7 +96,12 @@ func Login(ctx *gin.Context) {
 	}
 
 	// generate token
-	token := "token"
+	token, err := common.IssueToken(user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"code": 500, "msg": "issue token error"})
+		log.Println(err.Error())
+		return
+	}
 
 	// response
 	ctx.JSON(
@@ -109,6 +114,15 @@ func Login(ctx *gin.Context) {
 			},
 		},
 	)
+}
+
+func Info(ctx *gin.Context) {
+	user, _ := ctx.Get("user")
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  "user info",
+		"data": gin.H{"user": user},
+	})
 }
 
 func isMobileExist(db *gorm.DB, mobile string) bool {

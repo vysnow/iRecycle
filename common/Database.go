@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+var DB *gorm.DB
 
 func InitDB() *gorm.DB {
 	host := "127.0.0.1"
@@ -33,9 +33,10 @@ func InitDB() *gorm.DB {
 	}
 	db.AutoMigrate(&model.User{})
 
+	DB = db
 	return db
 }
 
 func GetDB() *gorm.DB {
-	return db
+	return DB
 }
