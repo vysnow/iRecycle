@@ -1,0 +1,59 @@
+version: "3"
+
+# 声明一个名为network的networks,subnet为network的子网地址,默认网关是177.7.0.1
+networks:
+  network:
+    ipam:
+      driver: default
+      config:
+        - subnet: '177.7.0.0/16'
+        
+# 设置mysql，redis持久化保存
+volumes:
+  mysql:
+  redis:
+  
+services:
+  server:
+    build:
+      context: ./megofirst
+      dockerfile: ./Dockerfile
+    container_name: mego-server
+    restart: always
+    ports:
+      - '8080:8080'
+    # depends_on:
+    #   # - mysql
+    #   # - redis
+    # links:
+    #   # - mysql
+    #   # - redis
+    networks:
+      network:
+        ipv4_address: 177.7.0.12
+
+  # use host mysql server
+  # mysql:
+  #   image: mysql:8.0.21
+  #   container_name: gva-mysql
+  #   command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci #设置utf8字符集
+  #   restart: always
+  #   ports:
+  #     - "3306:3306"  # host物理直接映射端口为13306
+  #   environment:
+  #     MYSQL_DATABASE: 'mego' # 初始化启动时要创建的数据库的名称
+  #     MYSQL_ROOT_PASSWORD: 'mego' # root管理员用户密码
+  #   networks:
+  #     network:
+  #       ipv4_address: 177.7.0.13
+
+  # use isolate redis  
+  # redis:
+  #   image: redis:6.0.6
+  #   container_name: mego-redis # 容器名
+  #   restart: always
+  #   ports:
+  #     - '6379:6379'
+  #   networks:
+  #     network:
+  #       ipv4_address: 177.7.0.14
